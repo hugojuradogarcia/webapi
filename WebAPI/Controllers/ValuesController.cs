@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,19 +19,21 @@ namespace WebAPI.Controllers
 
         // GET api/values/5
         [HttpGet("{id:int}")]
-        public string Get([FromQuery]int id, string query)
+        public IActionResult Get([FromQuery]int id, string query)
         {
-            return $"value {id}, query {query}";
+            return Ok( new Value { id = id, text = "Value"});
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]Value value)
+        public IActionResult Post([FromBody]Value value)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                throw new InvalidOperationException("Invalid");
+                return BadRequest(ModelState);
             }
+
+            return CreatedAtAction("Get", new { id = value.id}, value);
         }
 
         // PUT api/values/5
